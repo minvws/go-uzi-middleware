@@ -27,7 +27,7 @@ type UziUser struct {
 }
 
 type value struct {
-	S  string `asn1:"optional,omitempty"`
+	S string `asn1:"optional,omitempty"`
 }
 
 type otherName struct {
@@ -36,7 +36,7 @@ type otherName struct {
 }
 
 type uziSubjectAltNames struct {
-	OtherNames []otherName  `asn1:"tag:0"`
+	OtherNames []otherName `asn1:"tag:0"`
 }
 
 var (

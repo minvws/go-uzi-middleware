@@ -1,6 +1,7 @@
 package uzimiddleware
 
 import (
+	"context"
 	"errors"
 	"log"
 	"net/http"
@@ -13,12 +14,12 @@ type errorHandler func(w http.ResponseWriter, r *http.Request, err string)
 
 // Options allows you to easily set options for the uzi middleware
 type Options struct {
-	StrictCACheck   bool            // Strict check on the CA
-	AllowedTypes    []UziType       // Allowed card types
-	AllowedRoles    []UziRole       // Allowed card roles
+	StrictCACheck bool      // Strict check on the CA
+	AllowedTypes  []UziType // Allowed card types
+	AllowedRoles  []UziRole // Allowed card roles
 
-	ErrorHandler    errorHandler    // Custom error handler
-	Debug           bool            // outputs debug information when set to true
+	ErrorHandler errorHandler // Custom error handler
+	Debug        bool         // outputs debug information when set to true
 }
 
 // UZIMiddleware is the actual middleware
@@ -77,6 +78,10 @@ func (uzi *UZIMiddleware) CheckUziCertificate(w http.ResponseWriter, r *http.Req
 		uzi.Options.ErrorHandler(w, r, err.Error())
 		return err
 	}
+
+	// Add the UZI user to the request
+	newReq := r.WithContext(context.WithValue(r.Context(), "uzi", user))
+	*r = *newReq
 
 	return nil
 }

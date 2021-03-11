@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/gorilla/mux"
 	uzi "github.com/minvws/go-uzimiddleware"
 	"github.com/urfave/negroni"
@@ -58,7 +57,8 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 
 func secureHandler(w http.ResponseWriter, r *http.Request) {
 	// Get UZI user from context
+	uziUser := r.Context().Value("uzi").(*uzi.UziUser)
 
 	w.Header().Set("Content-Type", "text/html")
-	_, _ = w.Write([]byte("<pre>" + spew.Sdump(user)))
+	_, _ = w.Write([]byte("Logged in: " + uziUser.SurName))
 }
