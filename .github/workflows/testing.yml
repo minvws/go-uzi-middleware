@@ -1,0 +1,56 @@
+name: Continuous intergration
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      matrix:
+        go-version: [1.13.x, 1.14.x, 1.15.x, 1.16.x ]
+        os: [ubuntu-20.04]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v2
+      with:
+        stable: '!contains(${{ matrix.go }}, "beta") && !contains(${{ matrix.go }}, "rc")'
+        go-version: ${{ matrix.go-version }}
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Go imports
+      run: |
+        go get -u golang.org/x/tools/cmd/goimports
+        OUT=`goimports -l .`
+        echo $OUT
+        test -z "$OUT"
+
+    - name: Go vet
+      run: |
+        go vet ./...
+
+    - name: Go static check
+      run: |
+        go get honnef.co/go/tools/cmd/staticcheck
+        GOPATH=`go env GOPATH`
+        $GOPATH/bin/staticcheck ./...
+
+    - name: Go ineffassign
+      run: |
+        go get -u github.com/gordonklaus/ineffassign
+        GOPATH=`go env GOPATH`
+        $GOPATH/bin/ineffassign ./...
+
+    - name: Go linting
+      run: |
+        go get -u golang.org/x/lint/golint
+        GOPATH=`go env GOPATH`
+        $GOPATH/bin/golint -set_exit_status ./...
+
+    - name: Go cyclo
+      run: |
+        go get -u github.com/fzipp/gocyclo/cmd/gocyclo
+        GOPATH=`go env GOPATH`
+        $GOPATH/bin/gocyclo -over 15 .
+
+    - name: Go test
+      run: |
+        go test -race -coverprofile=coverage.txt -covermode=atomic ./...
