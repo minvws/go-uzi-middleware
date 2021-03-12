@@ -33,7 +33,7 @@ const (
 	UziRoleHealthcarePsychologist   UziRole = "25."
 	UziRolePsychotherapist          UziRole = "16."
 	UziRoleDentist                  UziRole = "02."
-	UziRoleMidwife                  UziRole = "02."
+	UziRoleMidwife                  UziRole = "03."
 	UziRoleNurse                    UziRole = "30."
 	UziRolePhysAssistant            UziRole = "81."
 	UziRoleOrthopedagogueGeneralist UziRole = "31."
