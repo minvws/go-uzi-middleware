@@ -7,6 +7,9 @@ import (
 	"net/http"
 )
 
+// UziContext is the context key type. use UziContext("uzi") to fetch the context value
+type UziContext string
+
 var errPeerCertNotFound = errors.New("uzi: peer certificate not found")
 
 // errorHandler is a function that is called when an error occurs
@@ -80,15 +83,15 @@ func (uzi *UZIMiddleware) CheckUziCertificate(w http.ResponseWriter, r *http.Req
 	}
 
 	// Add the UZI user to the request
-	newReq := r.WithContext(context.WithValue(r.Context(), "uzi", user))
+	newReq := r.WithContext(context.WithValue(r.Context(), UziContext("uzi"), user))
 	*r = *newReq
 
 	return nil
 }
 
 // logf will output log statements when the debug option is enabled
-func (m *UZIMiddleware) logf(format string, args ...interface{}) {
-	if m.Options.Debug {
+func (uzi *UZIMiddleware) logf(format string, args ...interface{}) {
+	if uzi.Options.Debug {
 		log.Printf(format, args...)
 	}
 }

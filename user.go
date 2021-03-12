@@ -35,10 +35,6 @@ type otherName struct {
 	Value value `asn1:"tag:0"`
 }
 
-type uziSubjectAltNames struct {
-	OtherNames []otherName `asn1:"tag:0"`
-}
-
 var (
 	idAtSurName        = asn1.ObjectIdentifier{2, 5, 4, 4}
 	idAtGivenName      = asn1.ObjectIdentifier{2, 5, 4, 42}
@@ -108,7 +104,7 @@ func NewUziUserFromCert(cert *x509.Certificate) (*UziUser, error) {
 
 func parseOtherNames(bytes []byte) ([]otherName, error) {
 	var seq asn1.RawValue
-	rest, err := asn1.Unmarshal(bytes, &seq)
+	_, err := asn1.Unmarshal(bytes, &seq)
 	if err != nil {
 		return nil, errInvalidSubjectAltName
 	}
@@ -119,7 +115,7 @@ func parseOtherNames(bytes []byte) ([]otherName, error) {
 
 	var otherNames []otherName
 
-	rest = seq.Bytes
+	rest := seq.Bytes
 	for len(rest) > 0 {
 		var err error
 		otherNames, rest, err = parseOtherName(rest, otherNames)
@@ -146,7 +142,7 @@ func parseOtherName(bytes []byte, othernames []otherName) ([]otherName, []byte, 
 
 // Validate will validate an UZI user against the given arguments. Will return nil when validated correctly, or error
 func (u *UziUser) Validate(strictCA bool, allowedTypes []UziType, allowedRoles []UziRole) error {
-	if strictCA && u.OidCA != OID_CA_CARE_PROVIDER && u.OidCA != OID_CA_NAMED_EMPLOYEE {
+	if strictCA && u.OidCA != OidCaCareProvider && u.OidCA != OidCaNamedEmployee {
 		return errors.New("uzi: CA OID not UZI register Care Provider or named employee")
 	}
 

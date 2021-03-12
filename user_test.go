@@ -81,7 +81,7 @@ func TestNewUziUserFromCert(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, u)
 	assert.Equal(t, "12345678", u.UziNumber)
-	assert.Equal(t, UZI_TYPE_NAMED_EMPLOYEE, u.CardType)
+	assert.Equal(t, UziTypeNamedEmployee, u.CardType)
 	assert.Equal(t, "90000111", u.SubscriberNumber)
 	assert.Equal(t, "john", u.GivenName)
 	assert.Equal(t, "doe-12345678", u.SurName)
@@ -91,15 +91,15 @@ func TestNewUziUserFromCert(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, u)
 	assert.Equal(t, "11111111", u.UziNumber)
-	assert.Equal(t, UZI_TYPE_NAMED_EMPLOYEE, u.CardType)
+	assert.Equal(t, UziTypeNamedEmployee, u.CardType)
 	assert.Equal(t, "90000111", u.SubscriberNumber)
 	assert.Equal(t, "john", u.GivenName)
 	assert.Equal(t, "doe-11111111", u.SurName)
 }
 
 func TestUziUser_Validate(t *testing.T) {
-	roles := []UziRole{UZI_ROLE_DOCTOR, UZI_ROLE_DENTIST}
-	types := []UziType{UZI_TYPE_NAMED_EMPLOYEE, UZI_TYPE_CARE_PROVIDER}
+	roles := []UziRole{UziRoleDoctor, UziRoleDentist}
+	types := []UziType{UziTypeNamedEmployee, UziTypeCareProvider}
 
 	cert := loadCert(t, "./testdata/mock-012-correct-admin.cert")
 	u, _ := NewUziUserFromCert(cert)

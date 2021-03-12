@@ -15,8 +15,8 @@ import (
 func main() {
 	uziMiddleware := uzi.New(uzi.Options{
 		StrictCACheck: false,
-		AllowedTypes:  []uzi.UziType{uzi.UZI_TYPE_CARE_PROVIDER, uzi.UZI_TYPE_NAMED_EMPLOYEE},
-		AllowedRoles:  []uzi.UziRole{uzi.UZI_ROLE_DOCTOR},
+		AllowedTypes:  []uzi.UziType{uzi.UziTypeCareProvider, uzi.UziTypeNamedEmployee},
+		AllowedRoles:  []uzi.UziRole{uzi.UziRoleDoctor},
 		Debug:         false,
 	})
 
@@ -57,7 +57,7 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 
 func secureHandler(w http.ResponseWriter, r *http.Request) {
 	// Get UZI user from context
-	uziUser := r.Context().Value("uzi").(*uzi.UziUser)
+	uziUser := r.Context().Value(uzi.UziContext("uzi")).(*uzi.UziUser)
 
 	w.Header().Set("Content-Type", "text/html")
 	_, _ = w.Write([]byte("Logged in: " + uziUser.SurName))
