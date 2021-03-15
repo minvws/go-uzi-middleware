@@ -48,7 +48,7 @@ func New(options Options) *UZIMiddleware {
 
 // Handler is the main handler function for usage on net/http
 func (uzi *UZIMiddleware) Handler(h http.Handler) http.Handler {
-	return http.HandlerFunc(func (w http.ResponseWriter, r *http.Request) {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		err := uzi.CheckUziCertificate(w, r)
 		if err != nil {
 			return

@@ -9,7 +9,10 @@ import (
 
 var (
 	errInvalidSubjectAltName = errors.New("uzi: invalid SAN specified")
-	errNoSubjectAltNameFound = errors.New("uzi: no subjectAltName found in certificate")
+	errIncorrectOID          = errors.New("uzi: CA OID not UZI register Care Provider or named employee")
+	errIncorrectUziVersion   = errors.New("uzi: Version not 1")
+	errCardTypeNotAllowed    = errors.New("uzi: card type not allowed")
+	errCardRoleNotAllowed    = errors.New("uzi: role not allowed")
 )
 
 // UziUser is the populated structure that is returned by context to the request. It contains all information about the found UZI card
@@ -92,14 +95,12 @@ func NewUziUserFromCert(cert *x509.Certificate) (*UziUser, error) {
 		}
 
 		// Check if data is filled in. If so, we are done
-		if u.SubscriberNumber == "" || u.UziNumber == "" {
-			return nil, errInvalidSubjectAltName
+		if u.SubscriberNumber != "" && u.UziNumber != "" {
+			return u, nil
 		}
-
-		return u, nil
 	}
 
-	return nil, errNoSubjectAltNameFound
+	return nil, errInvalidSubjectAltName
 }
 
 func parseOtherNames(bytes []byte) ([]otherName, error) {
@@ -143,19 +144,19 @@ func parseOtherName(bytes []byte, othernames []otherName) ([]otherName, []byte, 
 // Validate will validate an UZI user against the given arguments. Will return nil when validated correctly, or error
 func (u *UziUser) Validate(strictCA bool, allowedTypes []UziType, allowedRoles []UziRole) error {
 	if strictCA && u.OidCA != OidCaCareProvider && u.OidCA != OidCaNamedEmployee {
-		return errors.New("uzi: CA OID not UZI register Care Provider or named employee")
+		return errIncorrectOID
 	}
 
 	if u.UziVersion != "1" {
-		return errors.New("uzi: Version not 1")
+		return errIncorrectUziVersion
 	}
 
 	if !containsType(allowedTypes, u.CardType) {
-		return errors.New("uzi: card type not allowed")
+		return errCardTypeNotAllowed
 	}
 
 	if !containsRole(allowedRoles, u.Role) {
-		return errors.New("uzi: role not allowed")
+		return errCardRoleNotAllowed
 	}
 
 	return nil

@@ -18,12 +18,12 @@ func TestNewUziUserFromCert(t *testing.T) {
 
 	cert = loadCert(t, "./testdata/mock-001-no-rnd.cert")
 	u, err = NewUziUserFromCert(cert)
-	assert.ErrorIs(t, err, errNoSubjectAltNameFound)
+	assert.ErrorIs(t, err, errInvalidSubjectAltName)
 	assert.Nil(t, u)
 
 	cert = loadCert(t, "./testdata/mock-001-no-valid-uzi-data.cert")
 	u, err = NewUziUserFromCert(cert)
-	assert.ErrorIs(t, err, errNoSubjectAltNameFound)
+	assert.ErrorIs(t, err, errInvalidSubjectAltName)
 	assert.Nil(t, u)
 
 	cert = loadCert(t, "./testdata/mock-002.crt")
@@ -114,17 +114,17 @@ func TestUziUser_Validate(t *testing.T) {
 	cert = loadCert(t, "./testdata/mock-008-invalid-version.cert")
 	u, _ = NewUziUserFromCert(cert)
 	err := u.Validate(true, types, roles)
-	assert.Equal(t, err.Error(), "uzi: Version not 1")
+	assert.ErrorIs(t, err, errIncorrectUziVersion)
 
 	cert = loadCert(t, "./testdata/mock-009-invalid-types.cert")
 	u, _ = NewUziUserFromCert(cert)
 	err = u.Validate(true, types, roles)
-	assert.Equal(t, err.Error(), "uzi: card type not allowed")
+	assert.ErrorIs(t, err, errCardTypeNotAllowed)
 
 	cert = loadCert(t, "./testdata/mock-010-invalid-roles.cert")
 	u, _ = NewUziUserFromCert(cert)
 	err = u.Validate(true, types, roles)
-	assert.Equal(t, err.Error(), "uzi: role not allowed")
+	assert.ErrorIs(t, err, errCardRoleNotAllowed)
 }
 
 func loadCert(t *testing.T, certFile string) *x509.Certificate {
