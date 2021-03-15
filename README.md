@@ -8,7 +8,7 @@ go-uzi-middleware is a simple and functional module which allows you to use the 
 
 go-uzi-middleware is available under the EU PL licence. It was created early 2021 during the COVID19 campaign as part of the vaccination registration project BRBA for the ‘Ministerie van Volksgezondheid, Welzijn & Sport, programma Realisatie Digitale Ondersteuning.’
 
-Questions and contributions are welcome via [GitHub](https://github.com/minvws/pUZI-php/issues).
+Questions and contributions are welcome via [GitHub](https://github.com/minvws/go-uzi-middleware/issues).
 
 ## Requirements
 
